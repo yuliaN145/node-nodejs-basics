@@ -5,8 +5,10 @@ import * as url from 'url';
     const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const newFolderPath = join(__dirname, 'files-copy');
 const folderPath = join(__dirname, 'files');
+import { access } from "node:fs/promises";
 
 const copy = async () => {
+  const isFileExist = access('./src/fs/files-copy/fresh.txt')
     readdir(join(__dirname), function (err, files){
         for(let i = 0; i < files.length; i++) {
           if(files[i] === 'files-copy'){
@@ -26,6 +28,9 @@ const copy = async () => {
               readFile(join(__dirname, 'files', chunk[i]), function(err, content) {
                 writeFile(join(__dirname, 'files-copy', chunk[i]), content, (err) => {
                   if (err) throw err; 
+                  if (isFileExist) {
+                    throw new Error('FS operation failed')
+                }
                   console.log('Файл был создан');
                 });
               });
